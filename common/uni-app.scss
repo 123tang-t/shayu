@@ -1,0 +1,12 @@
+.picker-view-column {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			.view {
+				display: flex;
+				flex-direction: row;
+		        justify-content: center;
+				align-items: center;
+			}
+		}

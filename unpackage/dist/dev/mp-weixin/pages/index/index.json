@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "鲨鱼记账",
+  "usingComponents": {
+    "date-picker": "/components/datepicker/datepicker"
+  }
+}
