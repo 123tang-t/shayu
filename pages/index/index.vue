@@ -13,67 +13,77 @@
 				<view class="sum">
 					<view class="income">
 						<view class="desc">收入</view>
-						<view class="money">0.00</view>
+						<view class="money">{{monthIncome}}</view>
 					</view>
 					<view class="outlay">
 						<view class="desc">支出</view>
-						<view class="money">{{allOutlay}}</view>
+						<view class="money">{{monthOutlay}}</view>
 					</view>
 				</view>
 			</view>
-			<!-- <view class="nav">
-				<view
-					class="icon-list"
-					v-for="(item, index) of iconList"
-					:key="index">
-					<image class="icon" :src="item.url" :mode="1"></image>
-					<view class="desc">{{item.desc}}</view>
-				</view>
-			</view> -->
 		</view>
 		<view class="detail-list">
-			<view v-for="(data, index) in detailData" :key="index">
+			<view v-for="(value, key) in detailData" :key="key">
 				<view class="title">
 					<view class="left">
-						<text>{{data.createTime.substring(5, 10)}}</text>
+						<text>{{value.time}}</text>
 					</view>
 					<view class="right">
-						<text>支出:</text>
-						<text class="number">{{outlay[index]}}</text>
+						<view v-if="value.day_sum_output" class="outlay">
+							<text>支出:</text>
+							<text class="number">{{value.day_sum_output}}</text>
+						</view>
+						<view v-if="value.day_sum_input" class="income">
+							<text>收入:</text>
+							<text class="number">{{value.day_sum_input}}</text>
+						</view>
 					</view>
 				</view>
 				<view class="list">
 					<view
 						class="list-child"
-						v-for="(item, index) in data.res"
+						v-for="(item, index) in value.bill_detail"
 						:key="index"
 						@click="openDetail(item)">
 						<view class="category">
 							<image
 								class="list-img"
-								:src="projectList[item.type].url">
+								:src="item.touch_icon">
 							</image>
 						</view>
 						<view class="text-content">
-							<view class="desc">{{item.remark}}</view>
-							<view class="money">-{{item.value}}</view>
+							<view class="desc">
+								{{item.bill_title}}
+							</view>
+							<view class="money">
+								{{item.type === 0?-item.bill_amount:item.bill_amount*100/100}}
+							</view>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
+		<!-- <view class="detail-list">
+			<detailList 
+				v-for="(menu, index) in detailData"
+				:key="index"
+				:menu="menu"/>
+		</view> -->
 		<date-picker
 			:visible="visible"
+			:close="close"
 			@change="dateChange"
 			@cancel="cancel"/>
 	</view>
 </template>
 
 <script>
-	import datePicker from '../../components/datepicker/datepicker.vue'
+	import { datePicker } from '../../components/datepicker/datepicker.vue'
+	// import { detailList } from '../../components/detailList/detailList.vue'
 	export default {
 		components: {
 			datePicker
+			// detailList
 		},
 		data() {
 			const dates = new Date()
@@ -84,148 +94,76 @@
 				year,
 				month,
 				day,
+				// 用户账号信息
+				user: {},
+				token: '',
+				// 月支出收入
+				monthOutlay: 0,
+				monthIncome: 0,
+				//详情列表
 				detailData: [],
+				list: [],
 				visible: false,
-				// iconList:[
-				// 	{
-				// 		id: '01',
-				// 		url: require('../../static/icon/1.png'),
-				// 		desc: '账单'
-				// 	}, {
-				// 		id: '02',
-				// 		url: require('../../static/icon/2.png'),
-				// 		desc: '预算'
-				// 	}, {
-				// 		id: '03',
-				// 		url: require('../../static/icon/3.png'),
-				// 		desc: '资产管家'
-				// 	}, {
-				// 		id: '04',
-				// 		url: require('../../static/icon/4.png'),
-				// 		desc: '理财知识'
-				// 	}, {
-				// 		id: '05',
-				// 		url: require('../../static/icon/5.png'),
-				// 		desc: '购物返现'
-				// 	}
-				// ],
-				projectList: [
-					{
-						url: require('../../static/icon/15.png'),
-						desc: '餐饮',
-					}, {
-						url: require('../../static/icon/16.png'),
-						desc: '日用',
-					}, {
-						url: require('../../static/icon/17.png'),
-						desc: '购物',
-					}, {
-						url: require('../../static/icon/18.png'),
-						desc: '交通',
-					}, {
-						url: require('../../static/icon/15.png'),
-						desc: '餐饮',
-					}, {
-						url: require('../../static/icon/16.png'),
-						desc: '日用',
-					}, {
-						url: require('../../static/icon/17.png'),
-						desc: '购物',
-					}, {
-						url: require('../../static/icon/18.png'),
-						desc: '交通',
-					}
-				]
-			}
-		},
-		computed: {
-			outlay () {
-				var number = []
-				this.detailData.forEach((item) => {
-					var sum = 0
-					item.res.forEach((value) => {
-						sum += value.value*100
-					})
-					sum = sum/100
-					number.push(sum)
-				})
-				return number
-			},
-			allOutlay () {
-				var number = []
-				var allSum = 0
-				this.detailData.forEach((item) => {
-					var sum = 0
-					item.res.forEach(value => {
-						sum += value.value*100
-					})
-					sum = sum/100
-					number.push(sum)
-				})
-				number.forEach(item => {
-					allSum += item * 100
-				})
-				return allSum / 100
+				close: true
 			}
 		},
 		onShow () {
+			this.user = this.$store.state.user
+			this.token = this.$store.state.token
 			this.getData()
 		},
 		methods: {
 			getData () {
-				let data = []
+				var timestamp = Math.round(new Date().getTime()/1000).toString()
+				if (this.user.user_id) {
+					uni.request({
+						url: 'http://106.55.25.207/bill/bill_detail_list',
+						method: 'POST',
+						data: {
+							user_id: this.user.user_id,
+							token: this.token,
+							bill_time: `${this.year}-${this.month}`,
+							time: timestamp
+						},
+						// header: {
+						// 	"content-type":"application/x-www-form-urlencoded"
+						// },
+						success: (res) => {
+							if (res.data.code === 200) {
+								this.monthOutlay = res.data.data.month_sum_output
+								this.monthIncome = res.data.data.month_sum_input
+								this.list = res.data.data.list
+								this.initArray()
+							}
+						},
+					})
+				}
+			},
+			initArray () {
 				let arr = []
-				// 获取选中月份的数据
-				this.$store.state.datas.forEach(item=> {
-					const date = new Date(item.createTime)
-					const curYear = date.getFullYear()
-					const curMonth = date.getMonth() + 1
-					if (curYear === this.year && curMonth === this.month) {
-						data.push(item)
+				Object.keys(this.list).forEach((key) => {
+					let arrObject = {
+						time: key,
+						bill_detail: this.list[key].bill_detail,
+						day_sum_input: this.list[key].day_sum_input,
+						day_sum_output: this.list[key].day_sum_output
+						
 					}
+					arr.push(arrObject)
 				})
-				// 选中的数据重新排序
-				data = data.sort((sel1, sel2) => {
-					const day1 = new Date(sel1.createTime).getDate()
-					const day2 = new Date(sel2.createTime).getDate()
-					if (day1 < day2) {
-						return -1
-					} else if (day1 > day2) {
+				arr = arr.sort((sel1, sel2) => {
+					let val1 = sel1.time.substring(3, 5)
+					let val2 = sel2.time.substring(3, 5)
+					if (val1 < val2) {
 						return 1
+					} else if (val1 > val2) {
+						return -1
 					} else {
 						return 0
 					}
-				})
-				data.forEach((oldData, i) => {
-					var index = -1
-					var createTime = oldData.createTime.substring(0, 10)
-					var alreadyExists = arr.some((newData, j) => {
-						if (oldData.createTime.substring(0, 10) === newData.createTime.substring(0, 10)) {
-							index = j
-							return true
-						}
-					})
-					if (!alreadyExists) {
-						arr.push({
-							createTime: oldData.createTime,
-							res: [{
-								value: oldData.value,
-								type: oldData.type,
-								remark: oldData.remark,
-								createTime: oldData.createTime,
-							}]
-						})
-					} else {
-						arr[index].res.push({
-							value: oldData.value,
-							type: oldData.type,
-							remark: oldData.remark,
-							createTime: oldData.createTime,
-						})
-					}
+					
 				})
 				this.detailData = arr
-				console.log(this.detailData)
 			},
 			openPickerDate () {
 				this.visible = true
@@ -237,15 +175,21 @@
 				this.year = e.year
 				this.month = e.month
 				this.visible = false
+				this.detailData = []
 				this.getData()
 				
 			},
 			openDetail (val) {
-				// console.log(val)
-				this.$store.dispatch('addDetail', val)
+				this.$store.commit('getBill', val)
+				this.$store.commit('getBillId', val.bill_id)
+				uni.navigateTo({
+					url: '/pages/detail/detail'
+				})
+				// // #ifdef H5
 				// uni.navigateTo({
 				// 	url: '/pages/detail/detail'
 				// })
+				// // #endif
 			}
 		}
 	}
@@ -257,8 +201,8 @@
 		// background: #f4f5f5;
 		.header {
 			background: #ffcc00;
-			border-bottom-left-radius: 15rpx;
-			border-bottom-right-radius: 15rpx;
+			// border-bottom-left-radius: 15rpx;
+			// border-bottom-right-radius: 15rpx;
 			padding-bottom: 15rpx;
 			.summary {
 				display: flex;
@@ -383,8 +327,11 @@
 				font-size: 24rpx;
 				letter-spacing: 2rpx;
 				.right {
-					.number {
-						margin: 0 0 0 5rpx;
+					display: flex;
+					flex-direction: row;
+					justify-content: space-between;
+					.outlay, .income {
+						margin-right: 15rpx;
 					}
 				}
 			}

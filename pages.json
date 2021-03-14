@@ -1,16 +1,25 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+		    "path" : "pages/chart/chart",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}, {
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "鲨鱼记账"
+				"navigationBarTitleText": "鲨鱼记账",
+				"enablePullDownRefresh": true
 			}
 			
 		}, {
 		    "path" : "pages/bookkeeping/bookkeeping",
 		    "style" :                                                                                    
 		    {
-		        "navigationBarTitleText": "支出",
+		        "navigationBarTitleText": "记账",
 		        "enablePullDownRefresh": false
 		    }
 		}, {
@@ -47,6 +56,23 @@
             }
             
         }
+        ,{
+            "path" : "pages/lognRegister/lognRegister",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }, {
+		    "path" : "pages/billBalance/billBalance",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
     ],
 	"tabBar": {
 	    "color": "#C0C0C0",
@@ -61,14 +87,24 @@
 	        "selectedIconPath": "./static/icon/1-2.png",
 	        "text": "明细"
 	    }, {
+			"pagePath": "pages/chart/chart",
+			"iconPath": "./static/icon/2-1.png",
+			"selectedIconPath": "./static/icon/2-2.png",
+			"text": "图表"
+		}, {
 	        "pagePath": "pages/bookkeeping/bookkeeping",
 	        "iconPath": "./static/icon/3-1.png",
 			"selectedIconPath": "./static/icon/3-1.png",
 	        "text": "记账"
 	    }, {
+			"pagePath":"pages/billBalance/billBalance",
+			"iconPath":"./static/icon/4-1.png",
+			"selectedIconPath":"static/icon/4-2.png",
+			"text":"账单"
+		}, {
 	        "pagePath": "pages/user/user",
-	        "iconPath": "./static/icon/2-1.png",
-			"selectedIconPath": "./static/icon/2-2.png",
+	        "iconPath": "./static/icon/5-1.png",
+			"selectedIconPath": "./static/icon/5-2.png",
 	        "text": "我的"
 	    }]
 	},
@@ -77,5 +113,15 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+	"condition" : { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [
+			{
+				"name": "", //模式名称
+				"path": "", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			}
+		]
 	}
 }

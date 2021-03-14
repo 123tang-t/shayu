@@ -1,5 +1,5 @@
 {
-    "name" : "bookkeeping_uni",
+    "name" : "bookkeeping",
     "appid" : "",
     "description" : "",
     "versionName" : "1.0.0",
@@ -60,7 +60,8 @@
         "appid" : "wxe8ef59a65fcdfd20",
         "setting" : {
             "urlCheck" : false,
-            "es6" : true
+            "es6" : true,
+            "postcss" : true
         },
         "usingComponents" : true
     },

@@ -49,6 +49,12 @@
 .dialog-picker .picker picker-view picker-view-column {
   width: 33%;
 }
+.dialog-picker .picker picker-view .picker-list {
+  text-align: center;
+}
+.dialog-picker .picker picker-view .picker-list .list-child {
+  line-height: 34px;
+}
 .dialog-picker .picker .indicatorStyle {
   width: 100%;
   height: 80rpx;

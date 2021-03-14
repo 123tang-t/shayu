@@ -24,6 +24,61 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+.bookkeeping .button-btn {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+          justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+  height: 150rpx;
+  background: #ffcc00;
+}
+.bookkeeping .button-btn .button {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+          justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+  width: 80%;
+  height: 80rpx;
+  border: 1rpx solid #000;
+  border-radius: 25rpx;
+}
+.bookkeeping .button-btn .button .left, .bookkeeping .button-btn .button .right {
+  width: 50%;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  font-size: 30rpx;
+}
+.bookkeeping .button-btn .button .left-button {
+  background: #000;
+  color: #ffcc00;
+  border-top-left-radius: 25rpx;
+  border-bottom-left-radius: 25rpx;
+}
+.bookkeeping .button-btn .button .right-button {
+  background: #000;
+  color: #ffcc00;
+  border-top-right-radius: 25rpx;
+  border-bottom-right-radius: 25rpx;
+}
 .bookkeeping .icon {
   display: -webkit-box;
   display: -webkit-flex;
@@ -70,8 +125,7 @@
   width: 80rpx;
   height: 80rpx;
   background: #f4f5f5;
-  -webkit-border-radius: 100%;
-          border-radius: 100%;
+  border-radius: 100%;
 }
 .bookkeeping .icon .list .list-child .chlid .img {
   width: 50rpx;

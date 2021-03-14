@@ -5,26 +5,36 @@
   },
   "setting": {
     "urlCheck": false,
-    "es6": true
+    "es6": true,
+    "postcss": true
   },
   "compileType": "miniprogram",
   "libVersion": "",
   "appid": "wxe8ef59a65fcdfd20",
-  "projectname": "bookkeeping_uni",
-  "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
+  "projectname": "bookkeeping",
   "condition": {
     "search": {
+      "current": -1,
       "list": []
     },
     "conversation": {
+      "current": -1,
       "list": []
     },
     "game": {
+      "current": -1,
       "list": []
     },
     "miniprogram": {
-      "list": []
+      "current": 0,
+      "list": [
+        {
+          "name": "",
+          "path": "",
+          "query": "",
+          "id": 0
+        }
+      ]
     }
   }
 }

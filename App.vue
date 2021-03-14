@@ -1,13 +1,30 @@
 <script>
 	export default {
 		onLaunch: function() {
-			console.log('App Launch')
 		},
 		onShow: function() {
-			console.log('App Show')
+			// uni.getProvider ({
+			// 	service: 'oauth',
+			// 	success: (res) => {
+			// 		if (~res.provider.indexOf('weixin')) {
+			// 			uni.login({
+			// 				provider: 'weixin',
+			// 				success: (res) => {
+			// 					console.log(res)
+			// 					uni.getUserInfo ({
+			// 						provider: 'weixin',
+			// 						success: (info) => {
+			// 							console.log(info.userInfo.nickName)
+			// 						}
+			// 					})
+			// 				}
+			// 			})
+			// 		}
+			// 	}
+				
+			// })
 		},
 		onHide: function() {
-			console.log('App Hide')
 		}
 	}
 </script>

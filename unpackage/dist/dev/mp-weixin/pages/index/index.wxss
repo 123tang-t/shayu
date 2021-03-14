@@ -29,10 +29,6 @@
 }
 .content .header {
   background: #ffcc00;
-  -webkit-border-bottom-left-radius: 15rpx;
-          border-bottom-left-radius: 15rpx;
-  -webkit-border-bottom-right-radius: 15rpx;
-          border-bottom-right-radius: 15rpx;
   padding-bottom: 15rpx;
 }
 .content .header .summary {
@@ -125,8 +121,7 @@
   margin: 0 20rpx;
   background: #ffffff;
   border: 1px solid #FFFFFF;
-  -webkit-box-shadow: 0 2rpx 2rpx 3rpx #fcf9f8;
-          box-shadow: 0 2rpx 2rpx 3rpx #fcf9f8;
+  box-shadow: 0 2rpx 2rpx 3rpx #fcf9f8;
 }
 .content .header .nav .icon-list {
   -webkit-box-flex: 1;
@@ -208,8 +203,20 @@
   font-size: 24rpx;
   letter-spacing: 2rpx;
 }
-.content .detail-list .title .right .number {
-  margin: 0 0 0 5rpx;
+.content .detail-list .title .right {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+}
+.content .detail-list .title .right .outlay, .content .detail-list .title .right .income {
+  margin-right: 15rpx;
 }
 .content .detail-list .list {
   margin: 0 20rpx;
@@ -251,8 +258,7 @@
   width: 60rpx;
   height: 60rpx;
   background: #f4f5f5;
-  -webkit-border-radius: 100%;
-          border-radius: 100%;
+  border-radius: 100%;
 }
 .content .detail-list .list .list-child .category .list-img {
   width: 35rpx;

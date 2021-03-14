@@ -8,8 +8,8 @@
 				@change="bindChange">
 				<picker-view-column class="picker-list">
 					<view class="item list-child" v-for="(item,index) in years" :key="index">{{item}}年</view>
-				</picker-view-column class="picker-list">
-				<picker-view-column>
+				</picker-view-column>
+				<picker-view-column class="picker-list" v-if="close">
 					<view class="item list-child" v-for="(item,index) in months" :key="index">{{item}}月</view>
 				</picker-view-column>
 				<picker-view-column class="picker-list" v-if="showHide === 'show'">
@@ -39,7 +39,8 @@
 	export default {
 		props: {
 			visible: Boolean,
-			showHide: String
+			showHide: String,
+			close: Boolean
 		},
 		data() {
 			const date = new Date()
@@ -66,8 +67,6 @@
 				days,
 				day,
 				value: [9999, month - 1, day - 1],
-				// visible: true,
-				// indicatorStyle: `height: ${Math.round(uni.getSystemInfoSync().screenWidth/(750/100))}px;`
 			}
 		},
 		onShow () {
@@ -79,19 +78,16 @@
 				this.year = this.years[val[0]]
 				this.month = this.months[val[1]]
 				this.day = this.days[val[2]]
-				console.log(this.month)
 			},
 			cancel () {
 				this.$emit('cancel')
 			},
 			define () {
-				// var pickerDate = `${this.year}/${this.month}/${this.day}`
 				var date = {
 					year: this.year,
 					month: this.month,
 					day: this.day,
 				}
-				console.log(date.month)
 				this.$emit('change', date)
 			}
 		}
@@ -141,6 +137,13 @@
 			padding: 0 40rpx;
 			picker-view-column {
 				width: 33%;
+			}
+			.picker-list {
+				// color: #09BB07;
+				text-align: center;
+				.list-child {
+					line-height: 34px;
+				}
 			}
 		}
 		.indicatorStyle {

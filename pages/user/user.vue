@@ -1,82 +1,61 @@
 <template>
 	<view class="user">
 		<view class="header">
-			<view class="user-info">
-				<view class="info">
-					<image class="img" src="../../static/img/sign2.jpg"></image>
-					<view class="name">鲨鱼用户</view>
+			<view class="account-number">
+				<view v-if="!msg" class="logn-register">
+					<view class="logn" @click="toLognRegister('logn')">登录</view>
+					<view class="register" @click="toLognRegister('register')">注册</view>
 				</view>
-				<view class="clock-in">
-					<image class="img" src="../../static/icon/clock.png"></image>
-					<view class="desc">打卡</view>
-				</view>
-			</view>
-			<view class="sum">
-				<view class="clock-number">
-					<view class="number">0</view>
-					<view class="desc">已连续打卡</view>
-				</view>
-				<view class="all-date">
-					<view class="number">0</view>
-					<view class="desc">记账总天数</view>
-				</view>
-				<view class="all-unlined">
-					<view class="number">0</view>
-					<view class="desc">记账总笔数</view>
-				</view>
-			</view>
-			<view class="member">
-				<view class="member-info">
-					<image src="../../static/icon/member.png"></image>
-					<view class="desc">升级为会员</view>
-				</view>
-				<image class="img" src="../../static/icon/right.png"></image>
-			</view>
-		</view>
-		<view class="nav">
-			<view class="nav-list" v-for="(item, index) in navList" :key="index">
-				<image class="nav-img" :src="item.url"></image>
-				<view class="nav-desc">{{item.desc}}</view>
-			</view>
-		</view>
-		<view class="bill">
-			<view class="title">
-				<view class="title-left">账单</view>
-				<image class="title-right" src="../../static/icon/right.png"></image>
-			</view>
-			<view class="summary">
-				<view class="month">
-					<view class="date-time">
-						<text class="number">{{month}}</text>
-						<text class="desc">月</text>
+				<view v-else class="user-info">
+					<image :src="user.user_picture" mode="头像"></image>
+					<view class="name">
+						{{user.user_name}}
 					</view>
 				</view>
-				<view class="sum">
-					<view class="income">
-						<view class="desc">收入</view>
-						<view class="money">0.00</view>
+			</view>
+			<view class="check-in-days">
+				<view class="left">
+					<view class="number">
+						{{number.clock_days}}
 					</view>
-					<view class="outlay">
-						<view class="desc">支出</view>
-						<view class="money">0.00</view>
+					<view class="desc">
+						已连续打卡
 					</view>
-					<view class="balance">
-						<view class="desc">结余</view>
-						<view class="money">0.00</view>
+				</view>
+				<view class="center">
+					<view class="number">
+						{{number.bill_counts}}
+					</view>
+					<view class="desc">
+						总记账天数
+					</view>
+				</view>
+				<view class="right">
+					<view class="number">
+						{{number.bill_days}}
+					</view>
+					<view class="desc">
+						总记账笔数
 					</view>
 				</view>
 			</view>
 		</view>
-		<view class="icon">
-			<view class="icon-title">常用功能</view>
-			<view class="icon-list">
-				<view class="list-child" v-for="(item, index) in iconList" :key="index">
-					<view class="list-img">
-						<image class="img" :src="item.url"></image>
+		<view class="menu-list">
+			<view
+				class="list"
+				v-for="(item, index) in menuList"
+				:key="index">
+				<view class="left">
+					<image class="img" :src="item.url" :mode="item.desc"></image>
+					<view class="desc">
+						{{item.desc}}
 					</view>
-					<view class="list-desc">{{item.desc}}</view>
 				</view>
+				<image class="right" src="../../static/icon/right.png" mode="右移"></image>
 			</view>
+		</view>
+		<view class="share-it">
+			<button class="button">推荐鲨鱼记账给好友</button>
 		</view>
 	</view>
 </template>
@@ -92,8 +71,10 @@
 				year,
 				month,
 				day,
-				mouth: '',
-				navList:[
+				token: '',
+				user: {},
+				number: {},
+				menuList:[
 					{
 						url: require('../../static/icon/6.png'),
 						desc: '消息'
@@ -110,294 +91,150 @@
 						url: require('../../static/icon/10.png'),
 						desc: '设置'
 					}
-				],
-				iconList:[
-					{
-						url: require('../../static/icon/11.png'),
-						desc: '模拟炒股'
-					}, {
-						url: require('../../static/icon/12.png'),
-						desc: '股票开户'
-					}, {
-						url: require('../../static/icon/13.png'),
-						desc: '省钱优惠券'
-					}, {
-						url: require('../../static/icon/14.png'),
-						desc: '汇率换算器'
-					}, {
-						url: require('../../static/icon/11.png'),
-						desc: '模拟炒股'
-					}, {
-						url: require('../../static/icon/12.png'),
-						desc: '股票开户'
-					}, {
-						url: require('../../static/icon/13.png'),
-						desc: '省钱优惠券'
-					}, {
-						url: require('../../static/icon/14.png'),
-						desc: '汇率换算器'
-					}
 				]
 			}
 		},
 		onLoad () {
 		},
+		onShow () {
+			this.user = this.$store.state.user
+			this.token = this.$store.state.token
+			this.initUser()
+		},
+		computed: {
+			msg () {
+				return this.$store.state.msg
+			}
+		},
 		methods: {
-			
+			initUser () {
+				var timestamp = Math.round(new Date().getTime()/1000).toString()
+				if (this.user.user_id) {
+					uni.request({
+						url: 'http://106.55.25.207/user/user_center',
+						data: {
+							user_id: this.user.user_id,
+							token: this.token,
+							time: timestamp
+						},
+						method: 'POST',
+						success: (res) => {
+							this.number = res.data.data
+						}
+					})
+				}
+			},
+			toLognRegister (e) {
+				this.$store.dispatch('lognRegister', e)
+				uni.navigateTo({
+					url: '/pages/lognRegister/lognRegister'
+				})
+			}
 		}
 	}
 </script>
 
 <style lang="scss">
 .user {
+	width: 100vw;
 	height: 100vh;
 	background: #f4f5f5;
 	.header {
+		height: 350rpx;
 		background: #ffcc00;
-		height: 280rpx;
-		position: relative;
-		border-bottom-left-radius: 15rpx;
-		border-bottom-right-radius: 15rpx;
-		.user-info {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			align-items: center;
-			height: 100rpx;
-			padding-top: 15rpx;
-			.info {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				margin-left: 30rpx;
-				.img {
-					width: 60rpx;
-					height: 60rpx;
-					border-radius: 50%;
-				}
-				.name{
-					margin-left: 20rpx;
-					font-size: 24rpx;
-				}
-			}
-			.clock-in {
+		.account-number {
+			height: 200rpx;
+			.logn-register {
 				display: flex;
 				flex-direction: row;
 				justify-content: center;
 				align-items: center;
-				width: 120rpx;
-				height: 40rpx;
-				margin-right: 20rpx;
-				background: #FFFFFF;
-				border-radius: 30rpx;
-				.img {
-					width: 30rpx;
-					height: 30rpx;
+				height: 200rpx;
+				.logn, .register {
+					width: 150rpx;
+					height: 80rpx;
+					line-height: 80rpx;
+					font-size: 30rpx;
+					text-align: center;
+					background: #fff;
+					color: #000;
+					border-radius: 15rpx;
 				}
-				.desc {
-					margin-left: 10rpx;
-					font-size: 20rpx;
+				.register {
+					margin-left: 40rpx;
 				}
 			}
-		}
-		.sum {
-			display: flex;
-			flex-direction: row;
-			height: 100rpx;
-			margin: 10rpx 15rpx 0;
-			.clock-number, .all-date, .all-unlined {
-				flex: 1;
+			.user-info {
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
 				align-items: center;
-				.desc {
-					font-size: 20rpx;
-					color: #C0C0C0;
+				height: 200rpx;
+				image {
+					margin-top: 25rpx;
+					width: 100rpx;
+					height: 100rpx;
 				}
-				
+				.name {
+					margin-top: 15rpx;
+					font-size: 40rpx;
+				}
 			}
 		}
-		.member {
+		.check-in-days {
 			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
+			flex-direction: flex;
+			justify-content: space-around;
 			align-items: center;
-			height: 80rpx;
-			position: absolute;
-			left: 30rpx;
-			right: 30rpx;
-			bottom: -40rpx;
-			background: #FFFFFF;
-			border-radius: 5rpx;
-			.member-info {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				margin-left: 20rpx;
-				image {
-					width: 40rpx;
-					height: 40rpx;
-				}
-				.desc {
-					margin-left: 15rpx;
-					font-size: 22rpx;
-					letter-spacing: 5rpx;
-				}
-			}
-			.img {
-				width: 25rpx;
-				height: 25rpx;
-				margin-right: 30rpx;
+			height: 150rpx;
+			.left, .center, .right {
+				width: 150rpx;
+				height: 100rpx;
+				color: #000;
+				text-align: center;
 			}
 		}
 	}
-	.nav {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		height: 100rpx;
-		margin: 60rpx 30rpx 0;
-		background: #FFFFFF;
-		.nav-list {
-			flex: 1;
+	.menu-list {
+		margin-top: 30rpx;
+		.list {
 			display: flex;
-			flex-direction: column;
-			justify-content: center;
+			flex-direction: flex;
+			justify-content: space-between;
 			align-items: center;
-			.nav-img {
+			margin-top: 5rpx;
+			height: 100rpx;
+			background: #fff;
+			.left {
+				display: flex;
+				flex-direction: flex;
+				align-items: center;
+				margin-left: 25rpx;
+				.img {
+					width: 50rpx;
+					height: 50rpx;
+				}
+				.desc {
+					margin-left: 30rpx;
+					font-size: 35rpx;
+				}
+			}
+			.right {
+				margin-right: 25rpx;
 				width: 40rpx;
 				height: 40rpx;
 			}
-			.nav-desc {
-				margin-top: 8rpx;
-				font-size: 22rpx;
-				color: #C0C0C0;
-			}
 		}
 	}
-	.bill {
-		display: flex;
-		flex-direction: column;
-		height: 130rpx;
-		margin: 20rpx 30rpx 0;
-		background: #FFFFFF;
-		.title {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			align-items: center;
-			height: 50rpx;
-			padding: 5rpx 10rpx;
-			.title-left {
-				margin-left: 15rpx;
-				font-size: 22rpx;
-				color: #333333;
-			}
-			.title-right {
-				width: 25rpx;
-				height: 25rpx;
-				margin-right: 30rpx;
-			}
-		}
-		.summary {
-			display: flex;
-			flex-direction: row;
+	.share-it {
+		margin: 50rpx 150rpx 0 150rpx;
+		.button {
 			height: 80rpx;
-			padding: 5rpx 10rpx;
-			.month {
-				display: flex;
-				align-items: center;
-				position: relative;
-				width: 80rpx;
-				padding: 25rpx 0rpx 25rpx 10rpx;
-				.date-time {
-					display: flex;
-					flex-direction: row;
-					height: 40rpx;
-					width: 80rpx;
-					border-right: 1px solid #ccc;
-					.number {
-						font-size: 35rpx;
-						color: #000000;
-						font-weight: 500;
-					}
-					.desc {
-						margin: 10rpx 0 0 3rpx;
-						font-size: 26rpx;
-					}
-				}
-			}
-			.sum {
-				flex: 1;
-				display: flex;
-				flex-direction: row;
-				margin-left: 25rpx;
-				.income, .outlay, .balance {
-					flex: 1;
-					margin: 0;
-					.desc, .money {
-						font-size: 22rpx;
-						color: #C0C0C0;
-					}
-					.money {
-						margin-top: 10rpx;
-						font-size: 20rpx;
-						color: #000000;
-						font-weight: 500;
-					}
-				}
-			}
-		}
-	}
-	.icon {
-		display: flex;
-		flex-direction: column;
-		margin: 20rpx 30rpx 0;
-		background: #FFFFFF;
-		padding: 0 0 100rpx 0;
-		.icon-title {
-			display: flex;
-			align-items: center;
-			height: 50rpx;
-			margin-left: 15rpx;
-			padding: 5rpx 10rpx;
-			font-size: 22rpx;
-			color: #333333;
-		}
-		.icon-list {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			.list-child {
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				width: 25%;
-				margin-bottom: 10rpx;
-				padding: 10rpx 0;
-				.list-img {
-					display: flex;
-					flex-direction: row;
-					justify-content: center;
-					align-items: center;
-					width: 80rpx;
-					height: 80rpx;
-					background: #FDFCFC;
-					border-radius: 50%;
-					.img {
-						width: 40rpx;
-						height: 40rpx;
-					}
-				}
-				.list-desc {
-					height: 40rpx;
-					margin-top: 10rpx;
-					font-size: 24rpx;
-					color: #C0C0C0;
-				}
-			}
+			line-height: 80rpx;
+			border-radius: 15rpx;
+			font-size: 35rpx;
+			background: #FF3333;
+			color: #fff;
 		}
 	}
 }

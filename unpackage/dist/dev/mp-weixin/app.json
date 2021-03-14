@@ -1,11 +1,14 @@
 {
   "pages": [
+    "pages/chart/chart",
     "pages/index/index",
     "pages/bookkeeping/bookkeeping",
     "pages/user/user",
     "pages/enterMoney/enterMoney",
     "pages/datepicker/datepicker",
-    "pages/detail/detail"
+    "pages/detail/detail",
+    "pages/lognRegister/lognRegister",
+    "pages/billBalance/billBalance"
   ],
   "subPackages": [],
   "window": {
@@ -27,18 +30,31 @@
         "text": "明细"
       },
       {
+        "pagePath": "pages/chart/chart",
+        "iconPath": "./static/icon/2-1.png",
+        "selectedIconPath": "./static/icon/2-2.png",
+        "text": "图表"
+      },
+      {
         "pagePath": "pages/bookkeeping/bookkeeping",
         "iconPath": "./static/icon/3-1.png",
         "selectedIconPath": "./static/icon/3-1.png",
         "text": "记账"
       },
       {
+        "pagePath": "pages/billBalance/billBalance",
+        "iconPath": "./static/icon/4-1.png",
+        "selectedIconPath": "static/icon/4-2.png",
+        "text": "账单"
+      },
+      {
         "pagePath": "pages/user/user",
-        "iconPath": "./static/icon/2-1.png",
-        "selectedIconPath": "./static/icon/2-2.png",
+        "iconPath": "./static/icon/5-1.png",
+        "selectedIconPath": "./static/icon/5-2.png",
         "text": "我的"
       }
     ]
   },
-  "usingComponents": {}
+  "usingComponents": {},
+  "sitemapLocation": "sitemap30.json"
 }
